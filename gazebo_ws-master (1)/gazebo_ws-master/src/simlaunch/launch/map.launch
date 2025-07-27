@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- 启动Gazebo仿真环境 -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find simlaunch)/worlds/simple_world.world"/>
+    </include>
+
+  <!-- 加载小车模型 -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find simlaunch)/urdf/diff_drive_car.urdf'"/>
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
+        args="-urdf -model diff_car -param robot_description" output="screen"/>
+
+    <node name="bagplay" pkg="rosbag" type="play" args="$(find fsd_common_msgs)/bag/vline.bag -l" output="screen"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find simlaunch)/rviz/my.rviz" output="screen"/>
+    <node name="carstate" pkg="carstate" type="carstatepub" output="screen"/>
+    <node name="mapandnav" pkg="mapandnav" type="map_and_nav_node" output="screen"/>
+    
+
+</launch>

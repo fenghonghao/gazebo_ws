@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="race_track_world">
+    <!-- 地面 -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- 锥桶模型（红色和蓝色，模拟赛道边界） -->
+    <model name="red_cone_1">
+      <pose>10 5 0 0 0 0</pose>
+      <link name="link">
+        <collision>
+          <geometry><cylinder radius="0.2" length="0.5"/></geometry>
+        </collision>
+        <visual>
+          <geometry><cylinder radius="0.2" length="0.5"/></geometry>
+          <material><ambient>1 0 0 1</material></visual>
+        </visual>
+      </link>
+    </model>
+
+    <model name="blue_cone_1">
+      <pose>10 -5 0 0 0 0</pose>
+      <link name="link">
+        <collision>
+          <geometry><cylinder radius="0.2" length="0.5"/></geometry>
+        </collision>
+        <visual>
+          <geometry><cylinder radius="0.2" length="0.5"/></geometry>
+          <material><ambient>0 0 1 1</material></visual>
+        </visual>
+      </link>
+    </model>
+    <!-- 红色锥桶序列（右侧） -->
+<model name="red_cone_2"><pose>15 5 0 0 0 0</pose>...</model>
+<model name="red_cone_3"><pose>20 5 0 0 0 0</pose>...</model>
+<model name="red_cone_4"><pose>25 7 0 0 0 0</pose>...</model>  <!-- 轻微转弯 -->
+
+<!-- 蓝色锥桶序列（左侧） -->
+<model name="blue_cone_2"><pose>15 -5 0 0 0 0</pose>...</model>
+<model name="blue_cone_3"><pose>20 -5 0 0 0 0</pose>...</model>
+<model name="blue_cone_4"><pose>25 -7 0 0 0 0</pose>...</model>
+  </world>
+</sdf>
