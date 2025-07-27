@@ -1,0 +1,5 @@
+mapandnav
+/home/bsb/桌面/gazebo_ws/devel/.private/mapandnav/share/mapandnav/cmake/mapandnavConfig.cmake /home/bsb/桌面/gazebo_ws/devel/share/mapandnav/cmake/mapandnavConfig.cmake
+/home/bsb/桌面/gazebo_ws/devel/.private/mapandnav/share/mapandnav/cmake/mapandnavConfig-version.cmake /home/bsb/桌面/gazebo_ws/devel/share/mapandnav/cmake/mapandnavConfig-version.cmake
+/home/bsb/桌面/gazebo_ws/devel/.private/mapandnav/lib/mapandnav/map_and_nav_node /home/bsb/桌面/gazebo_ws/devel/lib/mapandnav/map_and_nav_node
+/home/bsb/桌面/gazebo_ws/devel/.private/mapandnav/lib/pkgconfig/mapandnav.pc /home/bsb/桌面/gazebo_ws/devel/lib/pkgconfig/mapandnav.pc

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="bagplay" pkg="rosbag" type="play" args="$(find fsd_common_msgs)/bag/vline.bag -l" output="screen"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find simlaunch)/rviz/my.rviz" output="screen"/>
+    <node name="carstate" pkg="carstate" type="carstatepub" output="screen"/>
+    <node name="mapandnav" pkg="mapandnav" type="map_and_nav_node" output="screen"/>
+    
+
+</launch>

@@ -1,0 +1,4 @@
+simlaunch
+/home/bsb/桌面/gazebo_ws/devel/.private/simlaunch/share/simlaunch/cmake/simlaunchConfig.cmake /home/bsb/桌面/gazebo_ws/devel/share/simlaunch/cmake/simlaunchConfig.cmake
+/home/bsb/桌面/gazebo_ws/devel/.private/simlaunch/share/simlaunch/cmake/simlaunchConfig-version.cmake /home/bsb/桌面/gazebo_ws/devel/share/simlaunch/cmake/simlaunchConfig-version.cmake
+/home/bsb/桌面/gazebo_ws/devel/.private/simlaunch/lib/pkgconfig/simlaunch.pc /home/bsb/桌面/gazebo_ws/devel/lib/pkgconfig/simlaunch.pc
