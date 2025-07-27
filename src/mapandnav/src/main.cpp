@@ -9,23 +9,22 @@
 #include "tf2_ros/transform_broadcaster.h"
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
-#include "geometry_msgs/Pose2D.h"
 #include "tf2/transform_datatypes.h"
-#include "geometry_msgs/TransformStamped.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 #include "tf2/utils.h"
+#include "geometry_msgs/Pose2D.h"
+#include "geometry_msgs/TransformStamped.h"
 #include "mapcone.h"
 int main(int argc, char* argv[])
 {
     ros::init(argc, argv, "map_and_nav_node");
     ros::NodeHandle nh;
     MapCone mapcone(nh, 2);
+    tf2_ros::Buffer tf_buffer;
+    tf2_ros::TransformListener tf_listener(tf_buffer);
     ros::Subscriber conesub = nh.subscribe<fsd_common_msgs::ConeDetections>("/perception/lidar/cone_detections", 10, [&](const fsd_common_msgs::ConeDetectionsConstPtr &msg){
         fsd_common_msgs::ConeDetections transformed_msg = *msg;
         transformed_msg.header.frame_id = "map";
-        // Create tf buffer and listener once for all cones
-        static tf2_ros::Buffer tf_buffer;
-        static tf2_ros::TransformListener tf_listener(tf_buffer);
         
         // Get the transform once for this frame
         geometry_msgs::TransformStamped transform;
@@ -43,7 +42,7 @@ int main(int argc, char* argv[])
             point_in.point.x = cone.position.x;
             point_in.point.y = cone.position.y;
             point_in.point.z = cone.position.z;
-            
+            cone.color.data = cone.position.y>=-1?"r":"b";
             tf2::doTransform(point_in, point_out, transform);
             
             cone.position.x = point_out.point.x;

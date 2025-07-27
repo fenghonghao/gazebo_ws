@@ -2,12 +2,21 @@
 #define _CONES_H_
 #include "ros/ros.h"
 #include "geometry_msgs/Point.h"
+#include "geometry_msgs/PoseStamped.h"
 #include "fsd_common_msgs/Cone.h"
 #include "pcl-1.10/pcl/point_cloud.h"
 #include "pcl-1.10/pcl/point_types.h"
 #include "pcl-1.10/pcl/kdtree/kdtree_flann.h"
 #include "visualization_msgs/Marker.h"
 #include "visualization_msgs/MarkerArray.h"
+#include "nav_msgs/Path.h"
+#include "tf2_eigen/tf2_eigen.h"
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
+#include "tf2/transform_datatypes.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "tf2/utils.h"
 #include <string>
 struct cone
 {
@@ -19,12 +28,18 @@ struct cone
 class MapCone
 {
     std::vector<cone> cones;
+    nav_msgs::Path path;
+    std::vector<geometry_msgs::Point> track_centers;
     double distance_threshold;
-    ros::Publisher marker_pub;
+    const double track_width = 3.2;
+    ros::Publisher marker_pub;    ros::Publisher path_pub;
+    tf2_ros::Buffer tfBuffer;
+    tf2_ros::TransformListener tfListener;
 public:
-    MapCone(ros::NodeHandle &_nh, double distance_threshold = 0.3) : distance_threshold(distance_threshold)
+    MapCone(ros::NodeHandle &_nh, double distance_threshold = 0.3) : distance_threshold(distance_threshold), tfListener(tfBuffer)
     {
         marker_pub = _nh.advertise<visualization_msgs::MarkerArray>("/visualization_marker_array", 10);
+        path_pub = _nh.advertise<nav_msgs::Path>("/path", 10);
     }
     void addPoints(const std::vector<fsd_common_msgs::Cone> &conesAdd)
     {
@@ -53,6 +68,7 @@ public:
         }
         vis();
         clear();
+        pubpath();
         ROS_INFO("Cone size: %ld", cones.size());
     }
     void clear()
@@ -77,13 +93,100 @@ public:
         }
         for(int i=0;i<cones.size();++i)
         {
-            ROS_INFO("Cone[%d]: x=%.2f, y=%.2f, color=%s, cnt=%d", i, cones[i].position.x, cones[i].position.y, cones[i].color.c_str(), cones[i].cnt);
+            // ROS_INFO("Cone[%d]: x=%.2f, y=%.2f, color=%s, cnt=%d", i, cones[i].position.x, cones[i].position.y, cones[i].color.c_str(), cones[i].cnt);
             if(cones[i].cnt < 12 && ros::Time::now() - cones[i].timestamp > ros::Duration(2.0))
             {
                 cones.erase(cones.begin() + i);
                 i--;
             }
         }
+    }
+    void pubpath()
+    {
+        ROS_DEBUG("pubpath");
+        visualization_msgs::MarkerArray marker_array;
+        path.header.frame_id = "map";
+        path.header.stamp = ros::Time::now();
+        path.poses.clear();
+        std::vector<int> leftcones, rightcones;
+        track_centers.clear();
+        for(int i=0; i < cones.size(); ++i)
+        {
+            if(cones[i].color == "r")
+            {
+                leftcones.push_back(i);
+            }
+            else if(cones[i].color == "b")
+            {
+                rightcones.push_back(i);
+            }
+        }
+        int cnt=0;
+        for(int lidx:leftcones)
+        {
+            for(int ridx:rightcones)
+            {
+                double dx = cones[lidx].position.x - cones[ridx].position.x;
+                double dy = cones[lidx].position.y - cones[ridx].position.y;
+                double dis = sqrt(dx * dx + dy * dy);
+                if(abs(track_width - dis) <= 0.15)
+                {
+                    geometry_msgs::Point center;
+                    ROS_WARN("track_dis: %f,%f,%f", track_width,abs(track_width - dis),distance_threshold);
+                    center.x = (cones[lidx].position.x + cones[ridx].position.x) / 2;
+                    center.y = (cones[lidx].position.y + cones[ridx].position.y) / 2;
+
+                    // 计算方向向量
+                    double dir_x = cones[ridx].position.x - cones[lidx].position.x;
+                    double dir_y = cones[ridx].position.y - cones[lidx].position.y;
+                    double yaw = atan2(dir_y, dir_x);
+
+                    //tf2有根据角轴或者欧拉角初始化的构造函数
+                    tf2::Quaternion point_direction(tf2::Vector3(0, 0, 1), yaw+M_PI_2);
+
+                    // 创建路径点
+                    geometry_msgs::PoseStamped pose;
+                    pose.header.frame_id = "map";
+                    pose.header.stamp = ros::Time::now();
+                    pose.pose.position = center;
+                    pose.pose.orientation = tf2::toMsg(point_direction);
+                    path.poses.push_back(pose);
+                    
+
+                    visualization_msgs::Marker marker;
+                    marker.ns = "Path";
+                    marker.id = cnt++;
+                    marker.header.frame_id="map";
+                    marker.header.stamp = ros::Time::now();
+                    marker.action = visualization_msgs::Marker::ADD;
+                    marker.pose.position = center;
+                    // 初始化四元数，否则rviz会报Warn
+                    marker.pose.orientation = tf2::toMsg(point_direction);
+                    // 模型显示大小
+                    marker.scale.x = 1;
+                    marker.scale.y = 1;
+                    marker.scale.z = 1;
+                    marker.color.a = 1.0f;
+                    marker.type = visualization_msgs::Marker::ARROW;
+                    marker_array.markers.push_back(marker);
+                }
+            }
+            ROS_WARN("centers: %d\n",cnt);
+            path_pub.publish(path);
+        }
+        marker_pub.publish(marker_array);
+        // geometry_msgs::TransformStamped transform;
+        // try {
+        //     transform = tfBuffer.lookupTransform("map", "car", ros::Time::now(), ros::Duration(1.0));
+        // } catch (tf2::TransformException &ex) {
+        //     ROS_WARN("Transform lookup failed: %s", ex.what());
+        //     return;
+        // }
+        // ROS_INFO("Transform from rslidar to map: x=%.2f, y=%.2f, yaw=%.2f",
+        //          transform.transform.translation.x,
+        //          transform.transform.translation.y,
+        //          tf2::getYaw(transform.transform.rotation)
+        // );
     }
     void vis()
     {
@@ -150,11 +253,11 @@ public:
             marker_array.markers.push_back(marker);
         }
 
-        ROS_INFO("frame_id=%s", header.frame_id.c_str());
-        ROS_INFO("All:%ld",cones.size());
-        ROS_INFO("Blue:%d",cntb);
-        ROS_INFO("Red:%d",cntr);
-        ROS_INFO("Other:%d",cntu);
+        // ROS_INFO("frame_id=%s", header.frame_id.c_str());
+        // ROS_INFO("All:%ld",cones.size());
+        // ROS_INFO("Blue:%d",cntb);
+        // ROS_INFO("Red:%d",cntr);
+        // ROS_INFO("Other:%d",cntu);
         marker_pub.publish(marker_array);
     }
 };
