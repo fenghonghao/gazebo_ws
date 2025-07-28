@@ -29,6 +29,7 @@ int main(int argc, char* argv[])
         // Get the transform once for this frame
         geometry_msgs::TransformStamped transform;
         try {
+            // rslidar -> map
             transform = tf_buffer.lookupTransform("map", msg->header.frame_id, ros::Time::now(), ros::Duration(1.0));
         } catch (tf2::TransformException &ex) {
             ROS_WARN("Transform lookup failed: %s", ex.what());

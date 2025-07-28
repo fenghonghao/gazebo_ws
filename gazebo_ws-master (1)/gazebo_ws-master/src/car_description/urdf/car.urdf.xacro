@@ -132,8 +132,8 @@
     </plugin>
   </gazebo>
 
-  <!-- 控制器参数加载（指向外部yaml文件） -->
+  <!-- 控制器参数加载（指向外部yaml文件）
   <xacro:property name="controller_config" value="$(find your_car_package)/config/bicycle_controller.yaml"/>
-  <rosparam command="load" file="$(controller_config)"/>
+  <rosparam command="load" file="$(controller_config)"/> -->
 
 </robot>

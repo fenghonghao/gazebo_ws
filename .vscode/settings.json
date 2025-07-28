@@ -70,5 +70,6 @@
         "typeinfo": "cpp",
         "variant": "cpp"
     },
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true
 }

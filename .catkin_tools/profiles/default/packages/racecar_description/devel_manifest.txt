@@ -1,0 +1,4 @@
+racecar_description
+/home/bsb/桌面/gazebo_ws/devel/.private/racecar_description/share/racecar_description/cmake/racecar_descriptionConfig-version.cmake /home/bsb/桌面/gazebo_ws/devel/share/racecar_description/cmake/racecar_descriptionConfig-version.cmake
+/home/bsb/桌面/gazebo_ws/devel/.private/racecar_description/share/racecar_description/cmake/racecar_descriptionConfig.cmake /home/bsb/桌面/gazebo_ws/devel/share/racecar_description/cmake/racecar_descriptionConfig.cmake
+/home/bsb/桌面/gazebo_ws/devel/.private/racecar_description/lib/pkgconfig/racecar_description.pc /home/bsb/桌面/gazebo_ws/devel/lib/pkgconfig/racecar_description.pc
