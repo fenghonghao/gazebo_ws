@@ -72,4 +72,12 @@
     },
     "cmake.ignoreCMakeListsMissing": true,
     "github.copilot.chat.codeGeneration.useInstructionFiles": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "ros.distro": "noetic",
+    "python.autoComplete.extraPaths": [
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
 }
