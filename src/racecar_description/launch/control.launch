@@ -16,8 +16,8 @@
 
   <node name="cmdvel2gazebo" pkg="racecar_description" type="cmdvel2gazebo.py" respawn="true" output="screen"/>
 
-  <!-- <node name="vehicle_pose_and_velocity_updater" pkg="racecar_description" type="vehicle_pose_and_velocity_updater.py" respawn="true" output="screen"/>
+  <node name="vehicle_pose_and_velocity_updater" pkg="racecar_description" type="vehicle_pose_and_velocity_updater.py" respawn="true" output="screen"/>
 
-  <node name="transform_publisher" pkg="racecar_description" type="transform_publisher.py" respawn="true" output="screen"/> -->
+  <node name="transform_publisher" pkg="racecar_description" type="transform_publisher.py" respawn="true" output="screen"/>
 
 </launch>
