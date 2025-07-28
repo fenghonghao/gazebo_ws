@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
 	    <!-- 设置launch文件的参数 -->
-    <arg name="paused" default="false"/>
+    <arg name="paused" default="true"/>
     <arg name="use_sim_time" default="true"/>
     <arg name="gui" default="true"/>
     <arg name="headless" default="false"/>
@@ -9,7 +9,7 @@
     <!--模型车的起点放置位置-->
     <arg name="x_pos" default="0"/>
     <arg name="y_pos" default="0"/>
-    <arg name="z_pos" default="0"/>
+    <arg name="z_pos" default="0.02"/>
     <arg name="R_pos" default="0"/>
     <arg name="P_pos" default="0"/>
     <arg name="Y_pos" default="0"/>
@@ -26,16 +26,16 @@
     	</include>
 
 	<!-- 加载机器人模型描述参数 -->
-	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find racebot_description)/urdf/racecar.xacro'"/>
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find racecar_description)/urdf/racecar.xacro'"/>
 
   	    <!-- 在gazebo中加载机器人模型-->
     <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-          args="-urdf -model racebot -param robot_description -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -R $(arg R_pos) -P $(arg P_pos) -Y $(arg Y_pos)"/> 
+          args="-urdf -model racecar -param robot_description -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -R $(arg R_pos) -P $(arg P_pos) -Y $(arg Y_pos)"/> 
     <!-- <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
           args="-urdf -model racebot -param robot_description -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos)"/>  -->
           
   <!-- ros_control racecar launch file -->
-  <include file="$(find racebot_description)/launch/control.launch">
+  <include file="$(find racecar_description)/launch/control.launch">
   </include>
 
 <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="static_transform_publisher" args="0 0 0 -1.57 0 -1.57 /real_sense /real_sense_depth" /> -->

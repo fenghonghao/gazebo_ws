@@ -13,10 +13,10 @@ class CmdVel2Gazebo:
         
         rospy.Subscriber('/cmd_vel', Twist, self.callback, queue_size=1)
 
-        self.pub_steerL = rospy.Publisher('/racebot/front_left_steering_position_controller/command', Float64, queue_size=1)
-        self.pub_steerR = rospy.Publisher('/racebot/front_right_steering_position_controller/command', Float64, queue_size=1)
-        self.pub_rearL = rospy.Publisher('/racebot/rear_left_velocity_controller/command', Float64, queue_size=1)
-        self.pub_rearR = rospy.Publisher('/racebot/rear_right_velocity_controller/command', Float64, queue_size=1)
+        self.pub_steerL = rospy.Publisher('/racecar/front_left_steering_position_controller/command', Float64, queue_size=1)
+        self.pub_steerR = rospy.Publisher('/racecar/front_right_steering_position_controller/command', Float64, queue_size=1)
+        self.pub_rearL = rospy.Publisher('/racecar/rear_left_velocity_controller/command', Float64, queue_size=1)
+        self.pub_rearR = rospy.Publisher('/racecar/rear_right_velocity_controller/command', Float64, queue_size=1)
 
         # initial velocity and tire angle are 0
         self.x = 0

@@ -15,9 +15,9 @@ class vehicle_pose_and_velocity_updater:
 	def __init__(self):
 		rospy.init_node('vehicle_pose_and_velocity_updater', log_level=rospy.DEBUG)
 
-		self.rear_pose_pub = rospy.Publisher('/racebot/rear_pose', PoseStamped, queue_size = 1)
-		self.center_pose_pub = rospy.Publisher('/racebot/center_pose', PoseStamped, queue_size = 1)
-		self.vel_pub = rospy.Publisher('/racebot/velocity', TwistStamped, queue_size = 1)
+		self.rear_pose_pub = rospy.Publisher('/racecar/rear_pose', PoseStamped, queue_size = 1)
+		self.center_pose_pub = rospy.Publisher('/racecar/center_pose', PoseStamped, queue_size = 1)
+		self.vel_pub = rospy.Publisher('/racecar/velocity', TwistStamped, queue_size = 1)
 
 		rospy.Subscriber('/gazebo/model_states', ModelStates, self.model_cb, queue_size = 1)
 
@@ -25,7 +25,7 @@ class vehicle_pose_and_velocity_updater:
 
 	def model_cb(self,data):
 		try:
-			vehicle_model_index = data.name.index("racebot")
+			vehicle_model_index = data.name.index("racecar")
 		except:
 			return
 		vehicle_position = data.pose[vehicle_model_index]

@@ -1,9 +1,9 @@
 <package format="2">
-  <name>racebot_description</name>
+  <name>racecar_description</name>
   <version>1.0.0</version>
   <description>
-    <p>URDF Description package for racebot_description</p>
-    <p>This package contains configuration data, 3D models and launch files for racebot_description robot</p>
+    <p>URDF Description package for racecar_description</p>
+    <p>This package contains configuration data, 3D models and launch files for racecar_description robot</p>
   </description>
   <author>TODO</author>
   <maintainer email="TODO@email.com" />
