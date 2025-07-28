@@ -1,0 +1,13 @@
+<launch>
+  <!-- 启动赛车Gazebo仿真环境 -->
+  <include file="$(find racecar_description)/launch/racecar_gazebo.launch">
+    <arg name="paused" value="false"/>
+    <arg name="gui" value="true"/>
+  </include>
+  
+  <!-- 启动建图和导航功能 -->
+  <include file="$(find simlaunch)/launch/map.launch"/>
+  
+  <!-- 启动控制器 -->
+  <include file="$(find simlaunch)/launch/control.launch"/>
+</launch>

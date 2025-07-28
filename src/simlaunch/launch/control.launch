@@ -1,9 +1,0 @@
-<launch>
-  <node name="bicycle_controller" pkg="controller" type="pure_pursuit_bicycle" output="screen">
-    <!-- 可配置参数 -->
-    <param name="wheelbase" value="2.5" /> <!-- 轴距（根据实际车辆调整） -->
-    <param name="max_steering_angle" value="0.523" /> <!-- 30度（弧度） -->
-    <param name="lookahead_distance" value="5.0" /> <!-- 预瞄距离 -->
-    <param name="target_speed" value="8.0" /> <!-- 目标速度（m/s） -->
-  </node>
-</launch>

@@ -6,6 +6,7 @@
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "geometry_msgs/TransformStamped.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "visualization_msgs/Marker.h"
 
 int main(int argc, char* argv[])
 {
@@ -15,6 +16,9 @@ int main(int argc, char* argv[])
     geometry_msgs::Pose2D origin;
     tf2_ros::TransformBroadcaster br;
     tf2_ros::StaticTransformBroadcaster static_br;
+
+     // 创建marker发布器，用于在RVIZ中显示小车
+    ros::Publisher marker_pub = nh.advertise<visualization_msgs::Marker>("car_marker", 10);
 
     // 发布静态坐标变换 car -> rslidar
     geometry_msgs::TransformStamped static_transform;
@@ -58,6 +62,31 @@ int main(int argc, char* argv[])
         transformStamped.transform.rotation.w = q.w();
 
         br.sendTransform(transformStamped);
+
+         // 发布可视化marker
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "map";
+        marker.header.stamp = ros::Time::now();
+        marker.ns = "car";
+        marker.id = 0;
+        marker.type = visualization_msgs::Marker::CUBE;
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.pose.position.x = car_state.x - origin.x;
+        marker.pose.position.y = car_state.y - origin.y;
+        marker.pose.position.z = 0.5;  // 离地高度
+        
+        // 设置小车尺寸
+        marker.scale.x = 1.0;
+        marker.scale.y = 0.5;
+        marker.scale.z = 0.3;
+        
+        // 设置颜色 (红色)
+        marker.color.r = 1.0f;
+        marker.color.g = 0.0f;
+        marker.color.b = 0.0f;
+        marker.color.a = 1.0;
+        
+        marker_pub.publish(marker);
     });
     ros::spin();
     return 0;

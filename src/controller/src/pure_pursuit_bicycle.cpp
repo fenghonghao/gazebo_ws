@@ -6,6 +6,7 @@
 #include "tf2_ros/buffer.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 #include "geometry_msgs/PointStamped.h"
+#include "geometry_msgs/Twist.h"
 
 class BicycleController {
 public:
@@ -17,7 +18,7 @@ public:
             &BicycleController::pathCallback, this);
         
         // 发布控制指令（自行车模型：速度+转向角）
-        control_pub_ = nh_.advertise<fsd_common_msgs::ControlCommand>("/control/command", 10);
+        control_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
 
         // 加载参数（轴距、最大转向角等）
         nh_.param("wheelbase", wheelbase_, 2.5);  // 轴距（米）
@@ -75,10 +76,10 @@ private:
         delta = std::clamp(delta, -max_steering_angle_, max_steering_angle_);
 
         // 5. 发布控制指令（线速度+转向角）
-        fsd_common_msgs::ControlCommand cmd;
-        cmd.speed = target_speed_;  // 可根据路径曲率动态调整
-        cmd.steering_angle = delta;
-        control_pub_.publish(cmd);
+        geometry_msgs::Twist control_msg;
+        control_msg.linear.x = target_speed_;
+        control_msg.angular.z = target_speed_ * tan(delta) / wheelbase_;
+        control_pub_.publish(control_msg);
     }
 
     // 查找预瞄点
