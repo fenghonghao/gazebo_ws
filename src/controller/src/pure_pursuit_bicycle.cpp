@@ -25,7 +25,7 @@ public:
         nh_.param("wheelbase", wheelbase_, 2.6);  // 轴距（米）
         nh_.param("max_steering_angle", max_steering_angle_, 0.0523);  // 最大转向角（30度，弧度）
         nh_.param("lookahead_distance", lookahead_distance_, 5.0);  // 预瞄距离（米）
-        nh_.param("target_speed", target_speed_, 5.0);  // 目标线速度（米/秒）
+        nh_.param("target_speed", target_speed_, 8.0);  // 目标线速度（米/秒）
     }
 
 private:
