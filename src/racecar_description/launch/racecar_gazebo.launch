@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
 	    <!-- 设置launch文件的参数 -->
-    <arg name="paused" default="true"/>
+    <arg name="paused" default="false"/>
     <arg name="use_sim_time" default="true"/>
     <arg name="gui" default="true"/>
     <arg name="headless" default="false"/>
@@ -12,7 +12,7 @@
     <arg name="z_pos" default="0.02"/>
     <arg name="R_pos" default="0"/>
     <arg name="P_pos" default="0"/>
-    <arg name="Y_pos" default="0"/>
+    <arg name="Y_pos" default="-0.8"/>
 
 	<!--运行gazebo仿真环境-->
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -21,7 +21,7 @@
         	<arg name="paused" value="$(arg paused)"/>
         	<arg name="use_sim_time" value="$(arg use_sim_time)"/>
         	<arg name="headless" value="$(arg headless)"/>
-	 <!-- <arg name="world_name" value="$(find racebot_gazebo)/worlds/race_with_cone.world"/> -->
+	 <!-- <arg name="world_name" value="$(find racecar_description)/worlds/my.world"/> -->
                <!-- .world文件的地址-->
     	</include>
 

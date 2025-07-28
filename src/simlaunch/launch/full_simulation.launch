@@ -8,6 +8,7 @@
   <!-- 启动建图和导航功能 -->
   <include file="$(find simlaunch)/launch/map.launch"/>
   
-  <!-- 启动控制器 -->
-  <include file="$(find simlaunch)/launch/control.launch"/>
+  <!-- 启动赛车控制器 -->
+   <node name="controller" pkg="controller" type="pure_pursuit_bicycle" output="screen"/>
+   
 </launch>

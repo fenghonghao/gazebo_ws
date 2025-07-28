@@ -172,6 +172,9 @@ public:
                 }
             }
             ROS_WARN("centers: %d\n",cnt);
+            sort(path.poses.begin(), path.poses.end(), [](const geometry_msgs::PoseStamped& a, const geometry_msgs::PoseStamped& b) {
+                return hypot(a.pose.position.x, a.pose.position.y) < hypot(b.pose.position.x, b.pose.position.y);
+            });
             path_pub.publish(path);
         }
         marker_pub.publish(marker_array);

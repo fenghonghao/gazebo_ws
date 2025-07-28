@@ -18,7 +18,8 @@ class transform_publisher():
 		br.sendTransform((pose.x, pose.y, pose.z),
 							(orientation.x, orientation.y, orientation.z, orientation.w),
 							rospy.Time.now(),
-							'base_link', 'world')
+							'base_footprint', 'map')
+		# br.sendTransform((0,0,0.16),(0,0,0,1),rospy.Time.now(),"base_footprint", "base_link");
 
 
 if __name__ == "__main__":

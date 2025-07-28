@@ -24,3 +24,6 @@ simlaunch/worlds/race_track.world   定义仿真环境（赛道与锥桶）
 新增 launch 文件（simlaunch/launch/control.launch）用于启动控制器节点
 
 ##新增的代码很乱，待优化 ，见谅
+
+
+roslaunch simlaunch full_simulation.launch 启动全部

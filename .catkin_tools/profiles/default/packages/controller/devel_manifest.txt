@@ -1,0 +1,5 @@
+controller
+/home/bsb/桌面/gazebo_ws/devel/.private/controller/share/controller/cmake/controllerConfig-version.cmake /home/bsb/桌面/gazebo_ws/devel/share/controller/cmake/controllerConfig-version.cmake
+/home/bsb/桌面/gazebo_ws/devel/.private/controller/share/controller/cmake/controllerConfig.cmake /home/bsb/桌面/gazebo_ws/devel/share/controller/cmake/controllerConfig.cmake
+/home/bsb/桌面/gazebo_ws/devel/.private/controller/lib/controller/pure_pursuit_bicycle /home/bsb/桌面/gazebo_ws/devel/lib/controller/pure_pursuit_bicycle
+/home/bsb/桌面/gazebo_ws/devel/.private/controller/lib/pkgconfig/controller.pc /home/bsb/桌面/gazebo_ws/devel/lib/pkgconfig/controller.pc

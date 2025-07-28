@@ -10,21 +10,22 @@
 
 class BicycleController {
 public:
-    BicycleController(ros::NodeHandle& nh) : nh_(nh) {
+    BicycleController(ros::NodeHandle& nh) : nh_(nh), tf_listener_(tf_buffer_) {
         // 订阅车辆状态和路径点
-        car_state_sub_ = nh_.subscribe("/estimation/slam/state", 10, 
+        car_state_sub_ = nh_.subscribe("/racecar/rear_pose", 10, 
             &BicycleController::carStateCallback, this);
         path_sub_ = nh_.subscribe("/path", 10,  
             &BicycleController::pathCallback, this);
-        
+        finished = 0;
+        lastidx = 0; // 上一个育苗点索引
         // 发布控制指令（自行车模型：速度+转向角）
         control_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
 
         // 加载参数（轴距、最大转向角等）
-        nh_.param("wheelbase", wheelbase_, 2.5);  // 轴距（米）
-        nh_.param("max_steering_angle", max_steering_angle_, 0.523);  // 最大转向角（30度，弧度）
+        nh_.param("wheelbase", wheelbase_, 2.6);  // 轴距（米）
+        nh_.param("max_steering_angle", max_steering_angle_, 0.0523);  // 最大转向角（30度，弧度）
         nh_.param("lookahead_distance", lookahead_distance_, 5.0);  // 预瞄距离（米）
-        nh_.param("target_speed", target_speed_, 8.0);  // 目标线速度（米/秒）
+        nh_.param("target_speed", target_speed_, 5.0);  // 目标线速度（米/秒）
     }
 
 private:
@@ -41,7 +42,8 @@ private:
     double max_steering_angle_; // 最大转向角限制
     double lookahead_distance_; // 预瞄距离
     double target_speed_;       // 目标线速度
-
+    bool finished;
+    int lastidx;
     // 路径点回调
     void pathCallback(const nav_msgs::PathConstPtr& msg) {
         path_points_.clear();
@@ -52,7 +54,7 @@ private:
 
 
     // 车辆状态回调
-    void carStateCallback(const fsd_common_msgs::CarStateConstPtr& car_state) {
+    void carStateCallback(const geometry_msgs::PoseStampedConstPtr& car_state) {
         if (path_points_.empty()) {
             ROS_WARN("No path points received");
             return;
@@ -64,8 +66,15 @@ private:
             ROS_WARN("No valid lookahead point found");
             return;
         }
-
-        // 2. 将预瞄点从map系转换到car系（获取横向偏差y）
+        if(finished == 1) {
+            ROS_ERROR("Finished path tracking");
+            geometry_msgs::Twist control_msg;
+            control_msg.linear.x = 0.0;
+            control_msg.angular.z = 0.0;
+            control_pub_.publish(control_msg);
+            return;
+        }
+        // 2. 将预瞄点从map系转换到base_link系（获取横向偏差y）
         double y_car = transformToCarFrame(lookahead_point, car_state);
 
         // 3. 计算转向角 
@@ -73,7 +82,7 @@ private:
         double delta = asin(2 * wheelbase_ * y_car / (lookahead_distance_ * lookahead_distance_));
 
         // 4. 限制转向角在物理范围内
-        delta = std::clamp(delta, -max_steering_angle_, max_steering_angle_);
+        delta = std::max(-max_steering_angle_, std::min(delta, max_steering_angle_));
 
         // 5. 发布控制指令（线速度+转向角）
         geometry_msgs::Twist control_msg;
@@ -83,17 +92,33 @@ private:
     }
 
     // 查找预瞄点
-    geometry_msgs::Point findLookaheadPoint(const fsd_common_msgs::CarStateConstPtr& car_state) {
-        geometry_msgs::Point car_pos = {car_state->car_state.x, car_state->car_state.y, 0.0};
+    geometry_msgs::Point findLookaheadPoint(const geometry_msgs::PoseStampedConstPtr& car_state) {
+        geometry_msgs::Point car_pos;
+        car_pos.x = car_state->pose.position.x;
+        car_pos.y = car_state->pose.position.y;
+        car_pos.z = 0.0;
         double min_dist = 1e9;
         geometry_msgs::Point best_point;
 
-        for (const auto& point : path_points_) {
-            double dist = hypot(point.x - car_pos.x, point.y - car_pos.y);
+        if(lastidx >= path_points_.size()) {
+            return best_point;  // 如果上次的索引超出范围，直接返回
+        }
+        ROS_INFO("lastidx: %d, path size: %ld", lastidx, path_points_.size());
+        for (int i=lastidx; i < path_points_.size(); ++i) {
+            double dist = hypot(path_points_[i].x - car_pos.x, path_points_[i].y - car_pos.y);
             // 寻找距离最接近预瞄距离的点
+            ROS_INFO("idx: %d, dist: %f", i, dist);
+            
             if (fabs(dist - lookahead_distance_) < min_dist) {
                 min_dist = fabs(dist - lookahead_distance_);
-                best_point = point;
+                ROS_INFO("mini_dist: %f, lookahead_distance: %f", min_dist, lookahead_distance_);
+                best_point = path_points_[i];
+                lastidx = i;
+                if (i >= 15 )
+                {
+                    finished = 1;
+                    break;
+                }
             }
         }
         return best_point;
@@ -101,15 +126,15 @@ private:
 
     // 将map系下的预瞄点转换到car系（获取横向偏差y）
     double transformToCarFrame(const geometry_msgs::Point& map_point, 
-                             const fsd_common_msgs::CarStateConstPtr& car_state) {
+                             const geometry_msgs::PoseStampedConstPtr& car_state) {
         geometry_msgs::PointStamped point_in, point_out;
         point_in.header.frame_id = "map";
         point_in.header.stamp = ros::Time::now();
         point_in.point = map_point;
 
         try {
-            // 利用carstate发布的map->car变换进行坐标转换
-            tf_buffer_.transform(point_in, point_out, "car", ros::Duration(0.1));
+            // 利用carstate发布的map->base_link变换进行坐标转换
+            tf_buffer_.transform(point_in, point_out, "base_footprint", ros::Duration(0.1));
         } catch (tf2::TransformException& ex) {
             ROS_WARN("Transform failed: %s", ex.what());
             return 0.0;

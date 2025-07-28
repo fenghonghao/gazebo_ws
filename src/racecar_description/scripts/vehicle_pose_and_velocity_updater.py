@@ -36,7 +36,7 @@ class vehicle_pose_and_velocity_updater:
 
 		# vehicle center position
 		center_pose = PoseStamped()
-		center_pose.header.frame_id = '/world'
+		center_pose.header.frame_id = '/map'
 		center_pose.header.stamp = time_stamp
 		center_pose.pose.position = vehicle_position.position
 		center_pose.pose.orientation = vehicle_position.orientation
@@ -44,12 +44,12 @@ class vehicle_pose_and_velocity_updater:
 
 		# vehicle rear axle position
 		rear_pose = PoseStamped()
-		rear_pose.header.frame_id = '/world'
+		rear_pose.header.frame_id = '/map'
 		rear_pose.header.stamp = time_stamp
 		center_x = vehicle_position.position.x
 		center_y = vehicle_position.position.y
-		rear_x = center_x - cos(yaw) * 0.5
-		rear_y = center_y - sin(yaw) * 0.5
+		rear_x = center_x - cos(yaw) * 1.3
+		rear_y = center_y - sin(yaw) * 1.3 # 后方1.3m处
 		rear_pose.pose.position.x = rear_x
 		rear_pose.pose.position.y = rear_y
 		rear_pose.pose.orientation = vehicle_position.orientation
