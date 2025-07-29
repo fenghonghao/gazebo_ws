@@ -23,7 +23,8 @@ public:
 
         // 加载参数（轴距、最大转向角等）
         nh_.param("wheelbase", wheelbase_, 2.6);  // 轴距（米）
-        nh_.param("max_steering_angle", max_steering_angle_, 0.0523);  // 最大转向角（30度，弧度）
+        nh_.param("max_steering_angle", max_steering_angle_, 3.0);  // 最大转向角(角度)
+        max_steering_angle_ = max_steering_angle_ * M_PI / 180.0;  // 转换为弧度
         nh_.param("lookahead_distance", lookahead_distance_, 5.0);  // 预瞄距离（米）
         nh_.param("target_speed", target_speed_, 8.0);  // 目标线速度（米/秒）
     }

@@ -1,0 +1,6 @@
+distance_threshold : 2 # 多经的距离视为同一个锥筒
+wheelbase : 2.6 # 轴距
+track_width : 3.2 # 车道宽度
+max_steering_angle : 3 # 最大转向角度（角度）
+lookahead_distance : 5 # 预瞄距离（米）
+target_speed : 8 # 目标线速度（米/秒）

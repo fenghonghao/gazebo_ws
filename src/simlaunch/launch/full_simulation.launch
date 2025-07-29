@@ -1,9 +1,8 @@
 <launch>
+  <rosparam command="load" file="$(find simlaunch)/config/racecar.yaml"/>
+  
   <!-- 启动赛车Gazebo仿真环境 -->
-  <include file="$(find racecar_description)/launch/racecar_gazebo.launch">
-    <arg name="paused" value="false"/>
-    <arg name="gui" value="true"/>
-  </include>
+  <include file="$(find racecar_description)/launch/racecar_gazebo.launch"/>
   
   <!-- 启动建图和导航功能 -->
   <include file="$(find simlaunch)/launch/map.launch"/>
