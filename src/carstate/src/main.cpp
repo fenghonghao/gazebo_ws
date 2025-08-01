@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
         }
 
         geometry_msgs::TransformStamped transformStamped;
-        transformStamped.header.stamp = ros::Time::now();
+        transformStamped.header.stamp = msg->header.stamp;
         transformStamped.header.frame_id = "map";
         transformStamped.child_frame_id = "car";
 
